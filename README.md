@@ -12,4 +12,6 @@ The data for this analysis are corpora that are part of the *Australian National
 
 The corpora can be downloaded free of charge from the [*ARDC Australian National Corpus* repository](https://researchdata.edu.au/australian-national-corpus/2018).
 
+# Instructions for use
 
+The notebooks in this reporsitory assume that the corpora are stored in a subdirectory labelled *data*. While the entire code for the analysis is made avialable and displayed, we decided against uploading and making the data available in this reporsitory for copyright reasons. Accordingyl, the interactive notebooks start with the analysis at a point where the instances of speech-unit final *or* are extracted fro the corpus data.   
