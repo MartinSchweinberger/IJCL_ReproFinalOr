@@ -1,0 +1,6 @@
+install.packages("rlang")
+install.packages("tidyverse")
+install.packages("quanteda")
+install.packages("here")
+install.packages("openxlsx")
+install.packages("knitr")
