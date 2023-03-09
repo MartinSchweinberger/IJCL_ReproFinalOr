@@ -15,3 +15,10 @@ The corpora can be downloaded free of charge from the [*ARDC Australian National
 # Instructions for use
 
 The notebooks in this reporsitory assume that the corpora are stored in a subdirectory labelled *data*. While the entire code for the analysis is made avialable and displayed, we decided against uploading and making the data available in this reporsitory for copyright reasons. Accordingyl, the interactive notebooks start with the analysis at a point where the instances of speech-unit final *or* are extracted fro the corpus data.   
+
+# Interactive notebook
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=suor_cb.ipynb)
+
+[Interactive notebook detailing the analysis of utterance-final or in Australian English](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=suor_cb.ipynb)
+
