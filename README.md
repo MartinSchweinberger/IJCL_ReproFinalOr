@@ -18,7 +18,7 @@ The notebooks in this reporsitory assume that the corpora are stored in a subdir
 
 # Interactive notebook
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=suor_cb.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=ufor_cb.ipynb)
 
-[Interactive notebook detailing the analysis of utterance-final or in Australian English](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=suor_cb.ipynb)
+[Interactive notebook detailing the analysis of utterance-final or in Australian English](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=ufor_cb.ipynb)
 
