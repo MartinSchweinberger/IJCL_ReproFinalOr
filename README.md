@@ -5,7 +5,7 @@ This reporsitory accompanies the article *How to improve reproducibility in corp
 # Corpus Data
 
 The data for this analysis are corpora that are part of the *Australian National Corpus*. The corpora used in this study are:
- * [*Australian Radio Talkback*](https://researchdata.edu.au/australian-radio-talkback/2008?source=undefined)  
+ * *Australian Radio Talkback* 
  * *Griffith Corpus of Spoken Australian English*  
  * *The Monash Corpus of Spoken English*  
  * *The La Trobe Corpus of Spoken Australian English*   
