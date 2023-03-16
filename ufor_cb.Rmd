@@ -1,0 +1,1025 @@
+---
+title: "Utterance-final or in Australian English"
+author: "Martin Schweinberger and Michael Haugh"
+date: "Feb. 28, 2023"
+output: html_document
+---
+
+# Preparation
+
+In a first step, we load or activate the packages.
+
+```{r setup2, message=F, warning=F}
+library(dplyr)
+library(stringr)
+library(tidyr)
+library(quanteda)
+library(here)
+library(openxlsx)
+library(knitr)
+```
+
+# Step 1: Computational extraction of all potential instances of utterance-final *or*
+
+This section extracts potential instances or candidate examples of utterance-final *or* (UF-or) from four spoken corpora:
+
+* [Australian Radio Talkback](https://www.ausnc.org.au/corpora/art)
+
+* [Griffith Corpus of Spoken Australian English](https://www.ausnc.org.au/corpora/gcsause)
+
+* [Monash corpus](https://www.ausnc.org.au/corpora/monash)
+
+* [The La Trobe Corpus of Spoken Australian English](https://www.ausnc.org.au/corpora/latrobecsause)
+
+## Loading data
+
+The corpora were downloaded and stored in a directory (folder) called `data`. To load the data, we define the paths to the files containing the transcripts (which are located in the `data` folder in the specific sub-directories for the corpora).
+
+>
+> **NOTE**: DO NOT EXECUTE THE CODE CHUNKS BELOW! IT IS DISPLAYED FOR TRANSPARENCY REASONS ONLY! THE DATA IS NOT MADE AVAILABLE FOR COPYRIGHT REASONS! 
+>
+> **THE INTERACTIVE CODE (CODE THAT IS EXECUTABLE) STARTS WITH THE SECTION "INTERACTIVE CODE BELOW"**
+>
+
+```{r eval = F}
+fart <- list.files(here::here("data", "Australian Radio Talkback/files/Raw"), full.names = T)
+fgri <- list.files(here::here("data", "Griffith Corpus of Spoken Australian English/files/Raw"), 
+                        pattern = ".txt", full.names = T)
+fmon <- list.files(here::here("data", "Monash/files/Text"), 
+                        pattern = ".txt", full.names = T)
+flat <- list.files(here::here("data", "The La Trobe Corpus of Spoken Australian English/files/Raw"), 
+                        pattern = ".txt", full.names = T)
+```
+
+
+We now check if we have the paths to the data by inspecting the first six paths of files in the *Australian Radio Talkback* corpus.
+
+```{r eval = F}
+# inspect
+head(fart)
+```
+
+![](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/images/pic01.JPG?raw=true)
+
+We now proceed by loading and processing (cleaning) the data.
+
+### Load ART
+
+We start with the  content of the *Australian Radio Talkback* corpus (art).
+
+```{r lart,  eval = F, message=F, warning=F}
+# load raw content
+vart <- sapply(fart, function(x){
+  # read in content of the file
+  x <- readLines(x)
+  # remove empty rows
+  x <- x[x != ""]
+  })
+# unlist the object containing the corpus data
+arttext <- unlist(vart)
+# collapse into a data frame
+artdf <- data.frame(names(arttext), names(arttext),arttext) %>%
+  # rename columns
+  dplyr::rename(corpus = colnames(.)[1],
+                file = colnames(.)[2],
+                text = colnames(.)[3]) %>%
+  # create new columns containing corpus, file, and speaker information as well as a column with clean content
+  dplyr::mutate(
+    # extract corpus name
+    corpus = stringr::str_replace_all(corpus, ".*data/(.*?)/.*", "\\1"),
+    # extract file name
+    file = stringr::str_replace_all(file, ".*Raw/(.*?)-raw.*", "\\1"),
+    # extract speaker
+    speaker = stringr::str_replace_all(text, "\\[(.*?)\\].*", "\\1"),
+    # clean transcripts
+    textclean = stringr::str_remove_all(text, ".*?\\]"),
+    # remove superfluous white spaces
+    textclean = stringr::str_squish(textclean))
+# remove row names
+rownames(artdf) <- NULL
+# inspect
+knitr::kable(head(artdf))
+```
+
+![](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/images/pic02.JPG?raw=true)
+
+### Load GRI
+
+We continue with the content of the files of the *Griffith Corpus of Spoken Australian English* (gri).
+
+```{r lgri,  eval = F, message=F, warning=F}
+vgri <- sapply(fgri, function(x){
+  x <- readLines(x, encoding = "UTF-8")
+  x <- x[x != ""]
+  x <- x[!stringr::str_detect(x, "\\|.*\\|")]
+  x <- paste0(x, collapse = " ")
+  x <- stringr::str_split(stringr::str_replace_all(x, "( [A-Z]:)", "qwertz\\1"), "qwertz")
+  x <- unlist(x)
+  x <- stringr::str_squish(x)
+})
+gritext <- unlist(vgri)
+# collapse into df
+gridf <- data.frame(names(gritext), names(gritext),gritext) %>%
+  dplyr::rename(corpus = colnames(.)[1],
+                file = colnames(.)[2],
+                text = colnames(.)[3]) %>%
+  dplyr::mutate(corpus = stringr::str_replace_all(corpus, ".*data/(.*?)/.*", "\\1"),
+                file = stringr::str_replace_all(file, ".*Raw/(.*?)-raw.*", "\\1"),
+                speaker = stringr::str_remove_all(text, ":.*"),
+                speaker = stringr::str_remove_all(speaker, "\\W.*\\W"),
+                speaker = stringr::str_remove_all(speaker, "[^[:alpha:]]"),
+                speaker = stringr::str_remove_all(speaker, "[a-z]"),
+                textclean = stringr::str_remove_all(text, "<.*?>"),
+                textclean = stringr::str_remove_all(textclean, "(.*?)"),
+                textclean = stringr::str_remove(textclean, "[0-9]{0,} {0,}[A-Z]{1,}:"),
+                textclean = stringr::str_remove_all(textclean, "[^[:alpha:]’ ]"),
+                textclean = stringr::str_squish(textclean))
+rownames(gridf) <- NULL
+# inspect
+knitr::kable(head(gridf))
+```
+
+![](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/images/pic03.JPG?raw=true)
+
+### Load MON
+
+We continue with the content of the files of the *Monash corpus* (mon)
+
+```{r lmon,  eval = F, message=F, warning=F}
+vmon <- sapply(fmon, function(x){
+  x <- readLines(x, encoding = "UTF-8")
+  x <- x[x != ""]
+  x <- paste0(x, collapse = "qwertz") %>%
+  stringr::str_remove_all("qwertz    ") %>%
+  stringr::str_split("qwertz") %>%
+  unlist() %>%
+  stringr::str_squish()
+  })
+# unlist
+montext <- unlist(vmon)
+# collapse into df
+mondf <- data.frame(names(montext), names(montext), montext) %>%
+  dplyr::rename(corpus = colnames(.)[1],
+                file = colnames(.)[2],
+                text = colnames(.)[3]) %>%
+  dplyr::mutate(corpus = stringr::str_replace_all(corpus, ".*data/(.*?)/.*", "\\1"),
+                file = stringr::str_replace_all(file, ".*Text/(.*?).txt", "\\1"),
+                speaker = paste0("NA"),
+                textclean = stringr::str_squish(text))
+rownames(mondf) <- NULL
+# inspect
+knitr::kable(head(mondf))
+```
+
+![](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/images/pic04.JPG?raw=true)
+
+### Load LAT
+
+We continue with the content of the files of the *The La Trobe Corpus of Spoken Australian English* (lat)
+
+```{r llat,  eval = F, message=F, warning=F}
+vlat <- sapply(flat, function(x){
+  x <- readLines(x, encoding = "UTF-8")
+  x <- x[x != ""]
+  })
+lattext <- unlist(vlat)
+# collapse into df
+latdf <- data.frame(names(lattext), names(lattext),lattext) %>%
+  dplyr::rename(corpus = colnames(.)[1],
+                file = colnames(.)[2],
+                text = colnames(.)[3]) %>%
+  dplyr::mutate(corpus = stringr::str_replace_all(corpus, ".*data/(.*?)/.*", "\\1"),
+                file = stringr::str_replace_all(file, ".*Raw/(.*?)-raw.*", "\\1"),
+                speaker = stringr::str_remove_all(text, ":.*"),
+                speaker = stringr::str_remove_all(speaker, "\\W.*\\W"),
+                speaker = stringr::str_remove_all(speaker, "[^[:alpha:]]"),
+                speaker = stringr::str_remove_all(speaker, "[a-z]"),
+                textclean = stringr::str_remove_all(text, "^[A-Z]{1,}:{0,1}"),
+                textclean = stringr::str_squish(textclean))
+rownames(latdf) <- NULL
+# inspect
+knitr::kable(head(latdf))
+```
+
+![](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/images/pic05.JPG?raw=true)
+
+## Collapse data into one table
+
+We now combine the corpora into a single data frame called *oz*.
+
+```{r  eval = F}
+oz <- rbind(artdf, gridf, mondf, latdf)
+# inspect
+knitr::kable(head(oz))
+```
+
+![](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/images/pic06.JPG?raw=true)
+
+## Extract UF-or
+
+In a next step, we extract utterances with utterance final *or*. We determine this by checking if a string (utterance) ends with the sequence *or* but we allow for another words to come after the or if it has up to three chacraters (e.g., "... or uhm?").
+
+```{r  eval = F}
+ufor <- oz %>%
+  dplyr::mutate(ufor = ifelse(stringr::str_detect(textclean, " or {0,}.{0,3}$"), 1, 0)) %>%
+  dplyr::filter(ufor == 1)
+# inspect
+knitr::kable(head(ufor$textclean))
+```
+
+![](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/images/pic07.JPG?raw=true)
+
+Next, we want to extract concordances (keywords-in-context) of potential hits (utterance-final *or*). The context should be two utterances preceding the utterance with utterance-final *or* and two utterances following the instance of utterance-final *or*.
+
+
+```{r ufors,  eval = F, message=F, warning=F}
+inds = which(stringr::str_detect(oz$textclean, " or {0,}.{0,3}$"))
+# We use lapply() to get all rows for all indices, result is a list
+rows <- lapply(inds, function(x) (x-2):(x+2))
+# With unlist() you get all relevant rows
+ufors <- oz[unlist(rows),]
+# insepct
+knitr::kable(head(ufors, 10))
+```
+
+![](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/images/pic08.JPG?raw=true)
+
+We now generate a table with the instances of utterance-final *or* and the preceding as well as subsequent utterances and save the data to out computer for the manual annotation of the functions of utterance-final *or*.
+
+
+```{r  eval = F, warning=F, message=F}
+# label instances
+nhits <- sapply(rows, function(x){ length(x) })
+nints <- 1:length(rows)
+labs <- rep(paste0("instance ", nints), each = nhits)
+# label context
+contlabs <- rep(c("pre2", "pre1", "hit", "post1", "post2"), length(rows))
+# add to kwics
+ufors <- ufors %>%
+  dplyr::mutate(hit = labs,
+                context = contlabs) %>%
+  dplyr::select(-speaker, -textclean) %>%
+  dplyr::relocate(corpus, file, hit, context, text)
+```
+
+The data frame now contains five lines for each instance: *pre2*, *pre1*, *hit*, *post1*, and *post2*. The instance of utterance-final *or* is shown in the row labeled as *hit*. The table below shows the first 10 lines of the data frame (i.e., 2 instances of utterance-final *or* plus two utterances before the instance, labelled *pre2* and *pre1*, and two utterances after the instance of utterance-final *or*, labelled *post1* and *post2*).
+
+```{r uforstb,  eval = F, warning=F, message=F}
+# inspect
+knitr::kable(head(ufors, 10))
+```
+
+
+![](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/images/pic09.JPG?raw=true)
+
+# Save data to disc for manual annotation
+
+We now save the data so that we can annotate and code the data manually in a spreadsheet software (MS Excel).
+
+```{r eval = F}
+# save
+write.xlsx(ufors, here::here("tables", "step1_ufor_complete.xlsx"), sheetName = "Sheet1", 
+           col.names = TRUE, 
+           row.names = TRUE, 
+           append = FALSE)
+```
+
+
+# Step 2: Manual annotation 
+
+This section details the annotation scheme used to manually annotate the instances of UF-or in a spreadsheet software (MS Excel).
+
+Manual annotation focused on: 
+
+1. action format (Question or Assertion)  
+2. question type (polar, alternative, Q-word), and   
+3. identification of false positives (FP)
+
+**UF-or data annotation scheme**
+
+The annotation scheme used to code individual instances of utterance-final *or* is provided below. Each instance was inspected and annotated with regard to the categories shown below.
+
+| **Question type**				 | **Action type**			       | **Response polarity**		    | **Responses to alternative questions**  | **Explicit-implicit (dis)confirmation**	  | **Response type**			   | **Annotator comment**					       | **Turn-initial particle**
+|------------------------------------------------|---------------------------------------------|------------------------------------|-----------------------------------------|-------------------------------------------|----------------------------------------|-------------------------------------------------------------------|-------------------------------------
+| Polar question [P]				 | Information-seeking question [Q]	       | Responses to polar questions:	    | First alternative [A]		      | Explicit (yes/no, direct repeat) [E]	  | Type-conforming (yes/no; A or B) [TC]  | Points to potentially follow-up; notes on more complex cases      | um, uh, ah, oh, well, look, mm, no, 
+| Alternative question [A]			 | Request (permission-seeking question) [R]   | Yes [Y]			    | Second alternative [B]		      | Implicit [I]				  | Non-type-conforming
+| Q-word question [Q]				 | Assertion [A]			       | No [N]				    | Neither [N]
+| False positive (i.e. not a question) [FP]	 | Suggestion [S]			       | Yes-no [YN]
+|------------------------------------------------|---------------------------------------------|------------------------------------|-----------------------------------------|-------------------------------------------|----------------------------------------|-------------------------------------------------------------------|-------------------------------------											       | Non-answer [NA]
+
+
+# INTERACTIVE CODE BELOW
+
+>
+> **THE CODE CHUNKS BELOW ARE INTERACTIVE (EXECUTABLE)** WHICH ALLOWS YOU TO INSPECT THE DATA AND PROBE IT IN GREATER DETAIL.
+>
+
+# Data Exploration and Analysis
+
+We now load the manually annotated data and check what the data looks like.
+
+```{r s2_01, warning=F, message=F}
+ufor_step2 <- openxlsx::read.xlsx(here::here("tables", "step2_ufors_qa_annotated.xlsx"), sheet = 1)
+# inspect
+ufor_step2 %>%
+  dplyr::filter(corpus == "The La Trobe Corpus of Spoken Australian English") %>%
+  # show first 10 rows
+  head(10) %>%
+  # show results as a table
+  knitr::kable()
+```
+
+
+The table has the following columns:
+
+*  X1:  an identifier value allowing us to unambiguously identifying every row in the data.  
+* corpus: the name of the corpus  in which the potential instance occurred
+* file: the file in which the potential instance occurred
+* hit: the number of the potential instance  
+* context: specification of whether the text shows previous utterances (pre2 and pre1), the instance itself (hit), or subsequent utterances (post1 and post2)  
+* text: the utterance preceding, containing, or following a potential instance of UF-or  
+* action.format: Question or Assertion 
+* question.type: Polar, Alternative, Q-word  
+* annotator.comment.1: Comments by the annotator
+* annotator.comment.2: Comments by the annotator
+
+
+Most of the cells are empty and do not contain any annotation information (these are all cells containing *NA* which stands for *not applicable*).
+
+We continue by cleaning the data, for example, by replacing `NA` and renaming columns and variable levels to be easier to understand 
+
+```{r s2_02, warning=F, message=F}
+ufor_step2_clean <- ufor_step2 %>%
+  dplyr::group_by(hit) %>%
+  tidyr::fill(action.format, .direction = "updown") %>%
+  tidyr::fill(question.type, .direction = "updown") %>%
+  # rename
+  dplyr::rename(`Action Format` = action.format,
+                `Question Type` = question.type,
+                `Annotator Comment 1` = annotator.comment.1,
+                `Annotator Comment 2` = annotator.comment.2,) %>%
+  # renaming levels
+  dplyr::mutate(`Action Format` = factor(`Action Format`, 
+                                       levels = c("Q", "A"), 
+                                       labels = c("Question (interrogative)", "Assertion (declarative)")),
+                `Question Type`  = factor(`Question Type`, 
+                                       levels = c("P", "A", "Q", "FP"), 
+                                       labels = c("Polar question", "Alternative question", "Q-word question", "False positive"))) %>%
+  # remove grouping
+  dplyr::ungroup()
+# inspect
+head(ufor_step2_clean, 5)
+```
+
+
+We now create a first overview table showing how many instances there are per Action Format.
+
+```{r}
+ufor_step2_clean %>%
+    dplyr::filter(context == "hit") %>%
+  dplyr::mutate(`Question Type` = ifelse(`Question Type` == "False positive", "False positive", "N")) %>%
+  dplyr::group_by(`Action Format`,`Question Type`) %>%
+  dplyr::summarise(N = n()) %>%
+  tidyr::spread(`Question Type`, N) %>%
+  dplyr::mutate(N = N + `False positive`) %>%
+  dplyr::relocate(`False positive`, .after = N) %>%
+  replace(is.na(.), 0) 
+```
+
+Candidate UF-or information seeking questions (N=63: 73-10)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(context == "hit") %>%
+  dplyr::filter(`Question Type` != "False positive") %>%
+  dplyr::group_by(`Question Type`) %>%
+  dplyr::summarise(N = n()) %>%
+  dplyr::add_row(`Question Type` = "Total", 
+                 N = sum(.$N))
+```
+
+## False positives
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(context == "hit") %>%
+  dplyr::filter(`Question Type` == "False positive") %>%
+  dplyr::group_by(`Question Type`) %>%
+  dplyr::summarise(N = n())
+```
+
+**1. Assertions (N=25)**  
+
+As we were interested in UF-or questions, assertions were by definition false positives (although an interesting phenomenon in its own right). 
+
+For example *Suggestion/advice marked with UF-or* (N=1)
+(ART: COME3, line 64):
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 13") %>%
+  dplyr::filter(context == "hit"| context == "post1") %>%
+  dplyr::mutate(text = stringr::str_remove_all(text, ".*>. ")) %>%
+  dplyr::select(text)
+```
+
+**2. Interrogatives (N=10)**  
+
+a. FP due to question being request for permission rather than request for information (N=1)
+(ART: COME3, instance 16)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 16") %>%
+  dplyr::filter(context != "post2") %>%
+  dplyr::select(text)
+```
+
+b. FP due to instance being utterance-medial rather than utterance-final (N=3)
+(MCE: MECG1M1, instance 54)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 54") %>%
+  dplyr::select(text)
+```
+
+
+(LTCE: Beth & Daniel, instance 82)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 82") %>%
+  dplyr::select(text)
+```
+
+
+(MCE: MESJ3F1, line 364):
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 73") %>%
+  dplyr::select(text)
+```
+
+c. FP created through script (N=6) (i.e. *or not* (instance 42, 76, 459), *or no* (instance 78), *or so* (instance 22), *or two* (instance 41))
+
+***or not***
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(`Question Type` == "False positive",
+                context == "hit") %>%
+  dplyr::filter(hit == "instance 42" | hit == "instance 76" | hit == "instance 92") %>%
+  dplyr::select(text)
+```
+
+***or no***
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(`Question Type` == "False positive",
+                context == "hit") %>%
+  dplyr::filter(hit == "instance 78") %>%
+  dplyr::select(text)
+```
+
+***or so***
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(`Question Type` == "False positive",
+                context == "hit") %>%
+  dplyr::filter(hit == "instance 22") %>%
+  dplyr::mutate(text = stringr::str_remove_all(text, ".*away. ")) %>%
+  dplyr::select(text)
+```
+
+***or two***
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(`Question Type` == "False positive",
+                context == "hit") %>%
+  dplyr::filter(hit == "instance 41") %>%
+  dplyr::mutate(text = stringr::str_remove_all(text, ".* 19 ")) %>%
+  dplyr::select(text)
+```
+
+**False negative (N=1)**
+
+
+(identified by Haugh 2011 in GCSAusE, but not extracted through script)
+(GCSAusE011)
+
+T: =so is it? (.) is it easy? o:r [like what]  
+B:                                               [ it’s   ha:  ]rd,
+
+
+# Step 3: Manual annotation 
+
+This section focuses on polar interrogatives.
+
+Responses to UF-or polar interrogatives were manually annotated by analyst (bottom-up [data-driven] and top-down [previous studies] annotation schema) (n=55)
+
+Manual annotation focused on: 
+
+1. response **polarity** (confirming [Y], disconfirming [N], (dis)confirming [Y-N], non-answers [NA])  
+2. response **alignment** (type-conforming [TC], non-type-conforming [NTC])  
+3. response **elaboration** (elaboration [E], no elaboration [NE])  
+
+We now load the manually annotated data and check what the data looks like.
+
+```{r s3_01, warning=F, message=F}
+ufor_step3 <- openxlsx::read.xlsx(here::here("tables", "step3_ufors_qp_annotated.xlsx"), sheet = 1)
+# inspect
+ufor_step3 %>%
+  dplyr::filter(corpus == "The La Trobe Corpus of Spoken Australian English") %>%
+  # show first 10 rows
+  head(10) %>%
+  # show results as a table
+  knitr::kable()
+```
+
+
+The table has the following columns:
+
+*  X1:  an identifier value allowing us to unambiguously identifying every row in the data.  
+* corpus: the name of the corpus  in which the potential instance occurred
+* file: the file in which the potential instance occurred
+* hit: the number of the potential instance  
+* context: specification of whether the text shows previous utterances (pre2 and pre1), the instance itself (hit), or subsequent utterances (post1 and post2)  
+* text: the utterance preceding, containing, or following a potential instance of UF-or  
+* action.format: Question or Assertion 
+* question.type: Polar, Alternative, Q-word  
+* response.polarity: Polarity of the response (post1) -confirming [Y], disconfirming [N], (dis)confirming [Y-N], non-answers [NA]  
+* response.elaboration: Elaboration of the response (post1) - elaboration [E], no elaboration [NE] 
+* response.alignment: Alignment of the response (post1) - type-conforming [TC], non-type-conforming [NTC]  
+* annotator.comment.1: Comments by the annotator
+* annotator.comment.2: Comments by the annotator
+
+
+Most of the cells are empty and do not contain any annotation information (these are all cells containing *NA* which stands for *not applicable*).
+
+We continue by cleaning the data, for example, by replacing `NA` and renaming columns and variable levels to be easier to understand 
+
+```{r s3_02, warning=F, message=F}
+ufor_step3_clean <- ufor_step3 %>%
+  dplyr::group_by(hit) %>%
+  tidyr::fill(action.format, .direction = "updown") %>%
+  tidyr::fill(question.type, .direction = "updown") %>%
+  tidyr::fill(response.polarity, .direction = "updown") %>%
+  tidyr::fill(response.alignment, .direction = "updown") %>%
+  tidyr::fill(response.elaboration, .direction = "updown") %>%
+  # rename
+  dplyr::rename(`Action Format` = action.format,
+                `Question Type` = question.type,
+                `Response Polarity` = response.polarity,
+                `Response Alignment` = response.alignment,
+                `Response Elaboration` = response.elaboration,
+                `Annotator Comment 1` = annotator.comment.1,
+                `Annotator Comment 2` = annotator.comment.2,) %>%
+  # renaming levels
+  dplyr::mutate(`Action Format` = factor(`Action Format`, 
+                                       levels = c("Q", "A"), 
+                                       labels = c("Question (interrogative)", "Assertion (declarative)")),
+                `Question Type`  = factor(`Question Type`, 
+                                       levels = c("P", "A", "Q", "FP"), 
+                                       labels = c("Polar question", "Alternative question", "Q-word question", "False positive")),
+                `Response Polarity`  = factor(`Response Polarity`, 
+                                       levels = c("Y", "N", "YN", "B", "NoA"), 
+                                       labels = c("Confirming [Y]", "Disconfirming [N]", "(Dis)confirming [Y-N]", "B-answer [B]", "Non-answers [NA]")),
+                `Response Alignment`  = factor(`Response Alignment`, 
+                                       levels = c("TC", "NTC"), 
+                                       labels = c("Type-Conforming [TC]", "Non-Type-Conforming [NTC]")),
+                `Response Elaboration`  = factor(`Response Elaboration`, 
+                                       levels = c("E", "NE"), 
+                                       labels = c("Elaboration [E]", "No elaboration [NE]"))) %>%
+  # remove grouping
+  dplyr::ungroup()
+# inspect
+head(ufor_step3_clean, 5)
+```
+
+
+We now generate an overview tables.
+
+## Response Polarity
+
+```{r}
+ufor_step3_clean %>%
+    dplyr::filter(context == "hit") %>%
+  dplyr::mutate(`Response Polarity` = dplyr::case_when(`Response Polarity` == "B-answer [B]" ~ "Non-polar",
+                                                       `Response Polarity` == "Non-answers [NA]" ~ "Non-polar", 
+                                                       T ~ `Response Polarity`)) %>%
+  dplyr::group_by(`Response Polarity`) %>%
+  dplyr::summarise(N = n()) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(Total = sum(N)) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(Percent = round(N/Total*100, 1)) %>%
+  dplyr::select(-Total) %>%
+  dplyr::add_row(`Response Polarity` = "Total",
+                 N = sum(.$N),
+                 Percent = sum(.$Percent)) %>%
+  knitr::kable()
+```
+
+
+```{r}
+ufor_step3_clean %>%
+    dplyr::filter(context == "hit") %>%
+  dplyr::mutate(`Response Polarity` = dplyr::case_when(`Response Polarity` == "B-answer [B]" ~ "B-answer [B]",
+                                                       `Response Polarity` == "Non-answers [NA]" ~ "Non-answers [NA]",
+                                                       T ~ "Polar")) %>%
+  dplyr::group_by(`Response Polarity`) %>%
+  dplyr::summarise(N = n()) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(Total = sum(N)) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(Percent = round(N/Total*100, 1)) %>%
+  dplyr::select(-Total) %>%
+  dplyr::add_row(`Response Polarity` = "Total",
+                 N = sum(.$N),
+                 Percent = sum(.$Percent)) %>%
+  knitr::kable()
+```
+
+
+```{r}
+ufor_step3_clean %>%
+    dplyr::filter(context == "hit") %>%
+  dplyr::mutate(`Response Polarity` = dplyr::case_when(`Response Polarity` == "B-answer [B]" ~ "Non-polar",
+                                                       `Response Polarity` == "Non-answers [NA]" ~ "Non-polar",
+                                                       T ~ "Polar")) %>%
+  dplyr::group_by(`Response Polarity`) %>%
+  dplyr::summarise(N = n()) %>%
+  dplyr::arrange(-N) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(Total = sum(N)) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(Percent = round(N/Total*100, 1)) %>%
+  dplyr::select(-Total) %>%
+  dplyr::add_row(`Response Polarity` = "Total",
+                 N = sum(.$N),
+                 Percent = sum(.$Percent)) %>%
+  knitr::kable()
+```
+
+## Response Alignment
+
+
+```{r ra1, warning=F, message=F}
+ufor_step3_clean %>%
+  dplyr::filter(context == "hit") %>%
+  group_by(`Response Alignment`) %>% 
+  dplyr::summarise(N = n()) %>%
+  dplyr::arrange(-N) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(Total = sum(N)) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(Percent = round(N/Total*100, 1)) %>%
+  dplyr::select(-Total) %>%
+  dplyr::add_row(`Response Alignment` = "Total",
+                 N = sum(.$N),
+                 Percent = sum(.$Percent)) %>%
+  knitr::kable()
+```
+
+
+
+```{r warning=F, message=F}
+ufor_step3_clean %>%
+  dplyr::filter(context == "hit",
+                `Response Alignment` == "Type-Conforming [TC]") %>%
+  dplyr::mutate(`Response Polarity` = dplyr::case_when(`Response Polarity` == "Confirming [Y]" ~ "Confirming [Y]",
+                                                       `Response Polarity` == "Disconfirming [N]" ~ "Disconfirming [N]",
+                                                       TRUE ~ "other")) %>% 
+  group_by(`Response Alignment`, `Response Polarity`) %>% 
+  dplyr::summarise(Frequency = n()) %>%
+  dplyr::arrange(-Frequency) %>%
+  tidyr::spread(`Response Alignment`, Frequency) %>%
+  replace(is.na(.), 0) %>%
+  knitr::kable()
+```
+
+
+
+
+```{r warning=F, message=F}
+ufor_step3_clean %>%
+  dplyr::filter(context == "hit",
+                `Response Alignment` == "Non-Type-Conforming [NTC]") %>%
+  dplyr::mutate(`Response Polarity` = dplyr::case_when(`Response Polarity` == "Confirming [Y]" ~ "Confirming [Y]",
+                                                       `Response Polarity` == "Disconfirming [N]" ~ "Disconfirming [N]",
+                                                       `Response Polarity` == "(Dis)confirming [Y-N]" ~ "(Dis)confirming [Y-N]",
+                                                       TRUE ~ "Non-polar")) %>% 
+  group_by(`Response Alignment`, `Response Polarity`) %>% 
+  dplyr::summarise(Frequency = n()) %>%
+  dplyr::arrange(-Frequency) %>%
+  tidyr::spread(`Response Alignment`, Frequency) %>%
+  replace(is.na(.), 0) %>% 
+  dplyr::ungroup() %>%
+  dplyr::mutate(Total = sum(`Non-Type-Conforming [NTC]`)) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(Percent = round(`Non-Type-Conforming [NTC]`/Total*100, 1)) %>%
+  dplyr::select(-Total) %>%
+  dplyr::add_row(`Response Polarity` = "Total",
+                 `Non-Type-Conforming [NTC]` = sum(.$`Non-Type-Conforming [NTC]`),
+                 Percent = sum(.$Percent)) %>%
+  knitr::kable()
+```
+
+
+```{r warning=F, message=F}
+ufor_step3_clean %>%
+  dplyr::filter(context == "hit",
+                `Response Alignment` == "Non-Type-Conforming [NTC]") %>%
+  dplyr::mutate(`Response Polarity` = dplyr::case_when(`Response Polarity` == "Confirming [Y]" ~ "Polar",
+                                                       `Response Polarity` == "Disconfirming [N]" ~ "Polar",
+                                                       `Response Polarity` == "(Dis)confirming [Y-N]" ~ "Polar",
+                                                       TRUE ~ "Non-polar")) %>% 
+  group_by(`Response Alignment`, `Response Polarity`) %>% 
+  dplyr::summarise(Frequency = n()) %>%
+  dplyr::arrange(-Frequency) %>%
+  tidyr::spread(`Response Alignment`, Frequency) %>%
+  replace(is.na(.), 0) %>% 
+  dplyr::ungroup() %>%
+  dplyr::mutate(Total = sum(`Non-Type-Conforming [NTC]`)) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(Percent = round(`Non-Type-Conforming [NTC]`/Total*100, 1)) %>%
+  dplyr::select(-Total) %>%
+  dplyr::add_row(`Response Polarity` = "Total",
+                 `Non-Type-Conforming [NTC]` = sum(.$`Non-Type-Conforming [NTC]`),
+                 Percent = sum(.$Percent)) %>%
+  knitr::kable()
+```
+
+
+
+# Step 4: Computational-interpretive analysis 
+
+Computationally analysed responses to UF-or information-seeking polar questions [Q-P] using pivot tables and manual close-reading (N=55)
+
+1. UF-or information seeking questions are invariably responded as polar questions  
+2. UF-or makes elaboration a relevant next   
+
+## 1. UF-or information seeking questions are invariably responded as polar questions 
+
+Hypothesis: UF-or information-seeking questions are invariably responded to as polar questions (i.e. p or not?) rather than alternative questions (i.e. p or q?) (cf. Haugh 2011)
+
+**a. Distributional evidence** 
+
+48/55 responses are confirming/disconfirming/(dis)confirming (i.e. respond to as polar Q) (87.3%)
+
+2/55 responses are q responses (i.e. respond to as alternative Q) (3.6%)
+
+4/55 responses are non-answer responses (i.e. equivocal as to whether treating it as polar Q) (7.3%)
+
+**b. Interpretive evidence**
+
+*Alternative responses and non-answers are occasioned by teasing or repair (N=6)*.
+
+Alternative answers are used as vehicles for teasing or repair (N=2):
+
+1. (MCE: MEBH2FB, instance 50)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 50") %>%
+  dplyr::filter(context != "pre2") %>%
+  dplyr::select(text)
+```
+
+
+> q response to deliver counter-tease
+> information-seeking question as vehicle for teasing challenge
+
+2. (MCE: MECG2M1, instance 61)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 61") %>%
+  dplyr::filter(context != "pre2") %>%
+  dplyr::select(text)
+```
+
+
+> q response (confirming)
+> post-first insert expansion of prior information-seeking (Q-word) question
+
+*Non-answer responses are used as vehicles for teases, responses to teases or repair (N=4)*
+
+1. (ART: NAT2, instance 27)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 27") %>%
+  dplyr::filter(context != "pre2",
+                context != "pre1") %>%
+  dplyr::select(text)
+```
+
+
+
+> non-answer response
+> teasing Q-producer
+> Q-producer pursues response to her question
+
+(2) (ART: ABCE2, instance 3)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 3") %>%
+  dplyr::filter(context != "pre2") %>%
+  dplyr::select(text)
+```
+
+
+> non-answer response in response to tease
+> stand-alone ‘or’ to jokingly bait recipient
+
+(3) ART: COMNE1 (instance 18)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 18") %>%
+  dplyr::select(text)
+```
+
+> non-answer response
+> information-seeking question as vehicle for tease
+
+(4) ART: COME4 (instance 14)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 14") %>%
+  dplyr::filter(context != "pre2") %>%
+  dplyr::select(text)
+```
+
+
+
+> non-answer response
+> repair of terms of prior Q
+
+## 2. UF-or makes elaboration a relevant next 
+
+UF-or makes elaboration a relevant next (cf. Drake 2015)
+
+(n=49) NB. Alternative and non-answer responses (n=6) removed from count of (non)elaboration
+
+**a. Distributional evidence**
+
+(Dis)confirmation only (N=11) (22.4%)
+	confirmation only (N=7)
+	disconfirmation only (N=4)
+	
+(Dis)confirmation + elaboration (N=38) (77.6%)
+	confirmation + elaboration (N=18)
+	(dis)confirmation + elaboration (N=4)
+	disconfirmation + elaboration (N=16)
+
+**b. Interpretive evidence: Deviant cases**
+
+> non-production of elaboration treated as accountable absence
+
+MCE: MEBH1MB (instance 47) [deviant case]
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 47") %>%
+  dplyr::select(text)
+```
+
+> treats minimal confirmation as requiring elaboration
+
+**c. Interpretive evidence: Borderline cases**
+
+Bare confirmation/disconfirmation functions as "go ahead" response
+
+ART: COMNE3 (instance 21)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 21") %>%
+  dplyr::filter(context != "pre2",
+                context != "pre1") %>%
+  dplyr::select(text)
+```
+
+
+
+MCE: MEBH2FB (instance 49)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 49") %>%
+  dplyr::select(text)
+```
+
+
+MCE: MESJ3F1 (instance 72)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 72") %>%
+  dplyr::filter(context != "pre2") %>%
+  dplyr::select(text)
+```
+
+
+
+Bare confirmation occasioned by noticing of matter external to ongoing sequence
+
+GCS: AusE32 (instance 44)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 44") %>%
+  dplyr::filter(context != "pre2") %>%
+  dplyr::select(text)
+```
+
+
+96  J: 	So yeah:: ya gonna drop into the u:m (1.8) you gonna drop into 
+97 	the: tent embassy:: or:? 
+98 	(1.4) 
+99  S: 	Yeah man 
+100 	(.)
+101 J:	Check ↑that out↑
+
+Bare disconfirmation for emphatic (repeated) rejection
+
+> emphatic rejection treats question as inapposite
+
+ART: COMNE4 (instance 23)
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 23") %>%
+  dplyr::filter(context != "pre2",
+                context != "pre1") %>%
+  dplyr::select(text)
+```
+
+
+
+ART: ABCE1 (instance 2)
+
+```{r}
+#ufor_step2_clean$hit[str_detect(ufor_step2_clean$text, "hear a little bit")]
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 2") %>%
+  dplyr::filter(context != "post2") %>%
+  dplyr::select(text)
+```
+
+# Further exploration of the data
+
+This section provides pre-written code snippets that allow researchers to further explore the data.
+
+## Inspecting specific instances
+
+There are overall 98 instances of potential instances of UF-or. You can access any of these (including the respective coding) if you modify the number following the sequence `"instance "` in the code below.
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(hit == "instance 2")
+```
+
+If you want to inspect the instances and coding in the data set loaded for step 3, you simply need to change `ufor_step2_clean` to `ufor_step3_clean`.
+
+```{r}
+ufor_step3_clean %>%
+  dplyr::filter(hit == "instance 2")
+```
+
+Tabulation can be done by filtering the row containing the instance of UF-or and then grouping and summarizing based on what you want to tabulate.
+
+For example, if you want to inspect the number of false positives among question types, you could use the command below.
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(context == "hit") %>%
+  group_by(`Question Type`) %>%
+  summarise(Frequency = n())
+```
+
+Or, if you want to inspect the number of  question types across , you could use the command below.
+
+```{r}
+ufor_step2_clean %>%
+  dplyr::filter(context == "hit") %>%
+  group_by(`Question Type`, `Action Format`) %>%
+  summarise(Frequency = n())
+```
+
+# Outro
+
+```{r}
+sessionInfo()
+```
+
+
