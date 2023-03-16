@@ -14,7 +14,7 @@ The corpora can be downloaded free of charge from the [*ARDC Australian National
 
 # Instructions for use
 
-The notebooks in this reporsitory assume that the corpora are stored in a subdirectory labelled *data*. While the entire code (see [here for the R notebook]()) for the analysis is made avialable and displayed (see [here for a rendered html version of the R notebook]()), we decided against uploading and making the data available in this reporsitory for copyright reasons. Accordingly, the interactive notebooks start with the analysis at a point where the instances of speech-unit final *or* are extracted for the corpus data.   
+The notebooks in this reporsitory assume that the corpora are stored in a subdirectory labelled *data*. While the entire code (see [here for the R notebook](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/ufor_cb.Rmd)) for the analysis is made avialable and displayed (see [here for a rendered pdf version of the R notebook](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/ufor_cb.pdf)), we decided against uploading and making the data available in this reporsitory for copyright reasons. Accordingly, the interactive notebooks start with the analysis at a point where the instances of speech-unit final *or* are extracted for the corpus data.   
 
 # Interactive notebook
 
