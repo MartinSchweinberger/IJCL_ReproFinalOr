@@ -2,7 +2,7 @@
 title: "Utterance-final or in Australian English"
 author: "Martin Schweinberger and Michael Haugh"
 date: "Feb. 28, 2023"
-output: html_document
+output: word_document
 ---
 
 # Preparation
@@ -279,8 +279,8 @@ We now save the data so that we can annotate and code the data manually in a spr
 ```{r eval = F}
 # save
 write.xlsx(ufors, here::here("tables", "step1_ufor_complete.xlsx"), sheetName = "Sheet1", 
-           col.names = TRUE, 
-           row.names = TRUE, 
+           colNames = TRUE, 
+           rowNames = TRUE, 
            append = FALSE)
 ```
 
@@ -299,13 +299,15 @@ Manual annotation focused on:
 
 The annotation scheme used to code individual instances of utterance-final *or* is provided below. Each instance was inspected and annotated with regard to the categories shown below.
 
-| **Question type**				 | **Action type**			       | **Response polarity**		    | **Responses to alternative questions**  | **Explicit-implicit (dis)confirmation**	  | **Response type**			   | **Annotator comment**					       | **Turn-initial particle**
-|------------------------------------------------|---------------------------------------------|------------------------------------|-----------------------------------------|-------------------------------------------|----------------------------------------|-------------------------------------------------------------------|-------------------------------------
-| Polar question [P]				 | Information-seeking question [Q]	       | Responses to polar questions:	    | First alternative [A]		      | Explicit (yes/no, direct repeat) [E]	  | Type-conforming (yes/no; A or B) [TC]  | Points to potentially follow-up; notes on more complex cases      | um, uh, ah, oh, well, look, mm, no, 
-| Alternative question [A]			 | Request (permission-seeking question) [R]   | Yes [Y]			    | Second alternative [B]		      | Implicit [I]				  | Non-type-conforming
-| Q-word question [Q]				 | Assertion [A]			       | No [N]				    | Neither [N]
-| False positive (i.e. not a question) [FP]	 | Suggestion [S]			       | Yes-no [YN]
-|------------------------------------------------|---------------------------------------------|------------------------------------|-----------------------------------------|-------------------------------------------|----------------------------------------|-------------------------------------------------------------------|-------------------------------------											       | Non-answer [NA]
+
+Action format | Question type | Response polarity | Response elaboration | Response alignment
+|------------------------------------------------|---------------------------------------------|------------------------------------|-----------------------------------------|-------------------------------------------|----------------------------------------|
+Question [Q]| Information-seeking question [Q]| Yes [Y]| Explicit (yes/no, direct repeat) [E]| Type-conforming (yes/no; A or B) [TC]
+Assertion [A]| Polar question [P]| No [N]| Not explicit [NE]| Non-type-conforming [NTC]
+| | Alternative question [A]| Yes-No [Y-N]| | 
+| | False positive (i.e. not a question) [FP]| B-answer [B]| | 
+| | | No Answer [NoA]| | 
+
 
 
 # INTERACTIVE CODE BELOW
@@ -340,8 +342,6 @@ The table has the following columns:
 * text: the utterance preceding, containing, or following a potential instance of UF-or  
 * action.format: Question or Assertion 
 * question.type: Polar, Alternative, Q-word  
-* annotator.comment.1: Comments by the annotator
-* annotator.comment.2: Comments by the annotator
 
 
 Most of the cells are empty and do not contain any annotation information (these are all cells containing *NA* which stands for *not applicable*).
@@ -355,9 +355,7 @@ ufor_step2_clean <- ufor_step2 %>%
   tidyr::fill(question.type, .direction = "updown") %>%
   # rename
   dplyr::rename(`Action Format` = action.format,
-                `Question Type` = question.type,
-                `Annotator Comment 1` = annotator.comment.1,
-                `Annotator Comment 2` = annotator.comment.2,) %>%
+                `Question Type` = question.type) %>%
   # renaming levels
   dplyr::mutate(`Action Format` = factor(`Action Format`, 
                                        levels = c("Q", "A"), 
@@ -400,6 +398,8 @@ ufor_step2_clean %>%
 
 ## False positives
 
+All false positives combined.
+
 ```{r}
 ufor_step2_clean %>%
   dplyr::filter(context == "hit") %>%
@@ -413,7 +413,8 @@ ufor_step2_clean %>%
 As we were interested in UF-or questions, assertions were by definition false positives (although an interesting phenomenon in its own right). 
 
 For example *Suggestion/advice marked with UF-or* (N=1)
-(ART: COME3, line 64):
+
+ART: COME3 (instance 13):
 
 ```{r}
 ufor_step2_clean %>%
@@ -426,7 +427,8 @@ ufor_step2_clean %>%
 **2. Interrogatives (N=10)**  
 
 a. FP due to question being request for permission rather than request for information (N=1)
-(ART: COME3, instance 16)
+
+ART: COME3 (instance 16)
 
 ```{r}
 ufor_step2_clean %>%
@@ -436,7 +438,8 @@ ufor_step2_clean %>%
 ```
 
 b. FP due to instance being utterance-medial rather than utterance-final (N=3)
-(MCE: MECG1M1, instance 54)
+
+MCE: MECG1M1 (instance 54)
 
 ```{r}
 ufor_step2_clean %>%
@@ -445,7 +448,7 @@ ufor_step2_clean %>%
 ```
 
 
-(LTCE: Beth & Daniel, instance 82)
+LTCE: Beth & Daniel (instance 82)
 
 ```{r}
 ufor_step2_clean %>%
@@ -454,7 +457,7 @@ ufor_step2_clean %>%
 ```
 
 
-(MCE: MESJ3F1, line 364):
+MCE: MESJ3F1 (instance 73):
 
 ```{r}
 ufor_step2_clean %>%
@@ -462,7 +465,12 @@ ufor_step2_clean %>%
   dplyr::select(text)
 ```
 
-c. FP created through script (N=6) (i.e. *or not* (instance 42, 76, 459), *or no* (instance 78), *or so* (instance 22), *or two* (instance 41))
+c. FP created through script (N=6), i.e.: 
+
+* *or not* (instance 42, 76, 92)  
+* *or no* (instance 78)  
+* *or so* (instance 22)  
+* *or two* (instance 41)
 
 ***or not***
 
@@ -544,19 +552,17 @@ ufor_step3 %>%
 
 The table has the following columns:
 
-*  X1:  an identifier value allowing us to unambiguously identifying every row in the data.  
-* corpus: the name of the corpus  in which the potential instance occurred
-* file: the file in which the potential instance occurred
+*  X1:  an identifier value allowing us to unambiguously identifying every row in the data.    
+* corpus: the name of the corpus  in which the potential instance occurred  
+* file: the file in which the potential instance occurred  
 * hit: the number of the potential instance  
 * context: specification of whether the text shows previous utterances (pre2 and pre1), the instance itself (hit), or subsequent utterances (post1 and post2)  
 * text: the utterance preceding, containing, or following a potential instance of UF-or  
-* action.format: Question or Assertion 
+* action.format: Question or Assertion  
 * question.type: Polar, Alternative, Q-word  
-* response.polarity: Polarity of the response (post1) -confirming [Y], disconfirming [N], (dis)confirming [Y-N], non-answers [NA]  
-* response.elaboration: Elaboration of the response (post1) - elaboration [E], no elaboration [NE] 
-* response.alignment: Alignment of the response (post1) - type-conforming [TC], non-type-conforming [NTC]  
-* annotator.comment.1: Comments by the annotator
-* annotator.comment.2: Comments by the annotator
+* response.polarity: Polarity of the response (post1) -confirming [Y], disconfirming [N], (dis)confirming [Y-N], non-answers [NA]   
+* response.elaboration: Elaboration of the response (post1) - elaboration [E], no elaboration [NE]  
+* response.alignment: Alignment of the response (post1) - type-conforming [TC], non-type-conforming [NTC]   
 
 
 Most of the cells are empty and do not contain any annotation information (these are all cells containing *NA* which stands for *not applicable*).
@@ -565,6 +571,7 @@ We continue by cleaning the data, for example, by replacing `NA` and renaming co
 
 ```{r s3_02, warning=F, message=F}
 ufor_step3_clean <- ufor_step3 %>%
+  dplyr::mutate(question.type = str_squish(question.type)) %>%
   dplyr::group_by(hit) %>%
   tidyr::fill(action.format, .direction = "updown") %>%
   tidyr::fill(question.type, .direction = "updown") %>%
@@ -576,9 +583,7 @@ ufor_step3_clean <- ufor_step3 %>%
                 `Question Type` = question.type,
                 `Response Polarity` = response.polarity,
                 `Response Alignment` = response.alignment,
-                `Response Elaboration` = response.elaboration,
-                `Annotator Comment 1` = annotator.comment.1,
-                `Annotator Comment 2` = annotator.comment.2,) %>%
+                `Response Elaboration` = response.elaboration) %>%
   # renaming levels
   dplyr::mutate(`Action Format` = factor(`Action Format`, 
                                        levels = c("Q", "A"), 
@@ -665,6 +670,31 @@ ufor_step3_clean %>%
                  Percent = sum(.$Percent)) %>%
   knitr::kable()
 ```
+
+
+## Elaboration
+
+```{r}
+ufor_step3_clean %>%
+    dplyr::filter(context == "hit") %>%
+  dplyr::mutate(`Response Polarity` = dplyr::case_when(`Response Polarity` == "B-answer [B]" ~ "Non-polar",
+                                                       `Response Polarity` == "Non-answers [NA]" ~ "Non-polar",
+                                                       T ~ "Polar")) %>%
+  dplyr::filter(`Response Polarity` == "Polar") %>%
+  dplyr::group_by(`Response Elaboration`) %>%
+  dplyr::summarise(N = n()) %>%
+  dplyr::arrange(-N) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(Total = sum(N)) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(Percent = round(N/Total*100, 1)) %>%
+  dplyr::select(-Total) %>%
+  dplyr::add_row(`Response Elaboration` = "Total",
+                 N = sum(.$N),
+                 Percent = sum(.$Percent)) %>%
+  knitr::kable()
+```
+
 
 ## Response Alignment
 

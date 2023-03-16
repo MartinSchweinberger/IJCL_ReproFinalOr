@@ -609,8 +609,8 @@ knitr::kable(head(ufors, 10))</code></pre>
 manually in a spreadsheet software (MS Excel).</p>
 <pre class="r"><code># save
 write.xlsx(ufors, here::here(&quot;tables&quot;, &quot;step1_ufor_complete.xlsx&quot;), sheetName = &quot;Sheet1&quot;, 
-           col.names = TRUE, 
-           row.names = TRUE, 
+           colNames = TRUE, 
+           rowNames = TRUE, 
            append = FALSE)</code></pre>
 </div>
 <div id="step-2-manual-annotation" class="section level1">
@@ -631,77 +631,63 @@ utterance-final <em>or</em> is provided below. Each instance was
 inspected and annotated with regard to the categories shown below.</p>
 <table style="width:100%;">
 <colgroup>
-<col width="13%" />
-<col width="12%" />
-<col width="10%" />
-<col width="11%" />
-<col width="12%" />
-<col width="11%" />
 <col width="18%" />
-<col width="10%" />
+<col width="17%" />
+<col width="14%" />
+<col width="16%" />
+<col width="16%" />
+<col width="15%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th><strong>Question type</strong></th>
-<th><strong>Action type</strong></th>
-<th><strong>Response polarity</strong></th>
-<th><strong>Responses to alternative questions</strong></th>
-<th><strong>Explicit-implicit (dis)confirmation</strong></th>
-<th><strong>Response type</strong></th>
-<th><strong>Annotator comment</strong></th>
-<th><strong>Turn-initial particle</strong></th>
+<th>Action format</th>
+<th>Question type</th>
+<th>Response polarity</th>
+<th>Response elaboration</th>
+<th>Response alignment</th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Polar question [P]</td>
+<td>Question [Q]</td>
 <td>Information-seeking question [Q]</td>
-<td>Responses to polar questions:</td>
-<td>First alternative [A]</td>
+<td>Yes [Y]</td>
 <td>Explicit (yes/no, direct repeat) [E]</td>
 <td>Type-conforming (yes/no; A or B) [TC]</td>
-<td>Points to potentially follow-up; notes on more complex cases</td>
-<td>um, uh, ah, oh, well, look, mm, no,</td>
+<td></td>
 </tr>
 <tr class="even">
-<td>Alternative question [A]</td>
-<td>Request (permission-seeking question) [R]</td>
-<td>Yes [Y]</td>
-<td>Second alternative [B]</td>
-<td>Implicit [I]</td>
-<td>Non-type-conforming</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>Q-word question [Q]</td>
 <td>Assertion [A]</td>
+<td>Polar question [P]</td>
 <td>No [N]</td>
-<td>Neither [N]</td>
+<td>Not explicit [NE]</td>
+<td>Non-type-conforming [NTC]</td>
 <td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>Alternative question [A]</td>
+<td>Yes-No [Y-N]</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
+<td></td>
 <td>False positive (i.e. not a question) [FP]</td>
-<td>Suggestion [S]</td>
-<td>Yes-no [YN]</td>
-<td></td>
-<td></td>
+<td>B-answer [B]</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr class="odd">
-<td>————————————————</td>
-<td>———————————————</td>
-<td>————————————</td>
-<td>—————————————–</td>
-<td>——————————————-</td>
-<td>—————————————-</td>
-<td>——————————————————————-</td>
-<td>————————————-</td>
+<td></td>
+<td></td>
+<td>No Answer [NoA]</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -727,15 +713,13 @@ ufor_step2 %&gt;%
   knitr::kable()</code></pre>
 <table>
 <colgroup>
-<col width="1%" />
-<col width="12%" />
-<col width="6%" />
-<col width="3%" />
 <col width="2%" />
-<col width="31%" />
+<col width="19%" />
+<col width="9%" />
+<col width="4%" />
 <col width="3%" />
-<col width="3%" />
-<col width="30%" />
+<col width="49%" />
+<col width="5%" />
 <col width="5%" />
 </colgroup>
 <thead>
@@ -748,8 +732,6 @@ ufor_step2 %&gt;%
 <th align="left">text</th>
 <th align="left">action.format</th>
 <th align="left">question.type</th>
-<th align="left">annotator.comment.1</th>
-<th align="left">annotator.comment.2</th>
 </tr>
 </thead>
 <tbody>
@@ -763,8 +745,6 @@ ufor_step2 %&gt;%
 conflict or something (?)</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">22688</td>
@@ -773,8 +753,6 @@ conflict or something (?)</td>
 <td align="left">instance 81</td>
 <td align="left">pre1</td>
 <td align="left">K: mmm</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
@@ -788,8 +766,6 @@ conflict or something (?)</td>
 or not</td>
 <td align="left">A</td>
 <td align="left">FP</td>
-<td align="left">or not</td>
-<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">22690</td>
@@ -800,8 +776,6 @@ or not</td>
 <td align="left">D: I think you you should have and you must have an
 opinion you should have your own opinion which is crazy um I tends
 to</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
@@ -816,8 +790,6 @@ for me for example in English in English country ’cos I can do it
 and</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">22756</td>
@@ -827,8 +799,6 @@ and</td>
 <td align="left">pre2</td>
 <td align="left">um but it’s not necessarily always bad to be
 opinionated you could use it when it’s not not being so negative</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
@@ -843,8 +813,6 @@ everything or have just opinion on everything which is different ..
 no?</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">22758</td>
@@ -855,10 +823,6 @@ no?</td>
 <td align="left">B: ha.. having a strong opinion or =</td>
 <td align="left">Q</td>
 <td align="left">FP</td>
-<td align="left">Initially coded as uf-or Q. Subsequently coded as
-co-constructed utterance-medial - status as Q requires manual
-follow-up</td>
-<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">22759</td>
@@ -869,8 +833,6 @@ follow-up</td>
 <td align="left">D: = yeah [fighting]</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">22760</td>
@@ -879,8 +841,6 @@ follow-up</td>
 <td align="left">instance 82</td>
 <td align="left">post2</td>
 <td align="left">B: [or just an opin..]</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
@@ -904,10 +864,7 @@ occurred</li>
 instance of UF-or<br />
 </li>
 <li>action.format: Question or Assertion</li>
-<li>question.type: Polar, Alternative, Q-word<br />
-</li>
-<li>annotator.comment.1: Comments by the annotator</li>
-<li>annotator.comment.2: Comments by the annotator</li>
+<li>question.type: Polar, Alternative, Q-word</li>
 </ul>
 <p>Most of the cells are empty and do not contain any annotation
 information (these are all cells containing <em>NA</em> which stands for
@@ -921,9 +878,7 @@ understand</p>
   tidyr::fill(question.type, .direction = &quot;updown&quot;) %&gt;%
   # rename
   dplyr::rename(`Action Format` = action.format,
-                `Question Type` = question.type,
-                `Annotator Comment 1` = annotator.comment.1,
-                `Annotator Comment 2` = annotator.comment.2,) %&gt;%
+                `Question Type` = question.type) %&gt;%
   # renaming levels
   dplyr::mutate(`Action Format` = factor(`Action Format`, 
                                        levels = c(&quot;Q&quot;, &quot;A&quot;), 
@@ -935,16 +890,15 @@ understand</p>
   dplyr::ungroup()
 # inspect
 head(ufor_step2_clean, 5)</code></pre>
-<pre><code>## # A tibble: 5 × 10
-##   X1    corpus         file  hit   context text  Actio…¹ Quest…² Annot…³ Annot…⁴
-##   &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;fct&gt;   &lt;fct&gt;   &lt;chr&gt;   &lt;chr&gt;  
-## 1 132   Australian Ra… ABCE1 inst… pre2    [C5]… Questi… Polar … &lt;NA&gt;    &lt;NA&gt;   
-## 2 133   Australian Ra… ABCE1 inst… pre1    [E1]… Questi… Polar … &lt;NA&gt;    &lt;NA&gt;   
-## 3 134   Australian Ra… ABCE1 inst… hit     [P1]… Questi… Polar … &lt;NA&gt;    &lt;NA&gt;   
-## 4 135   Australian Ra… ABCE1 inst… post1   [E1]… Questi… Polar … &lt;NA&gt;    well-p…
-## 5 136   Australian Ra… ABCE1 inst… post2   [C5]… Questi… Polar … &lt;NA&gt;    &lt;NA&gt;   
-## # … with abbreviated variable names ¹​`Action Format`, ²​`Question Type`,
-## #   ³​`Annotator Comment 1`, ⁴​`Annotator Comment 2`</code></pre>
+<pre><code>## # A tibble: 5 × 8
+##   X1    corpus                    file  hit        context text  Actio…¹ Quest…²
+##   &lt;chr&gt; &lt;chr&gt;                     &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt; &lt;fct&gt;   &lt;fct&gt;  
+## 1 132   Australian Radio Talkback ABCE1 instance 1 pre2    [C5]… Questi… Polar …
+## 2 133   Australian Radio Talkback ABCE1 instance 1 pre1    [E1]… Questi… Polar …
+## 3 134   Australian Radio Talkback ABCE1 instance 1 hit     [P1]… Questi… Polar …
+## 4 135   Australian Radio Talkback ABCE1 instance 1 post1   [E1]… Questi… Polar …
+## 5 136   Australian Radio Talkback ABCE1 instance 1 post2   [C5]… Questi… Polar …
+## # … with abbreviated variable names ¹​`Action Format`, ²​`Question Type`</code></pre>
 <p>We now create a first overview table showing how many instances there
 are per Action Format.</p>
 <pre class="r"><code>ufor_step2_clean %&gt;%
@@ -981,6 +935,7 @@ are per Action Format.</p>
 ## 4 Total                   63</code></pre>
 <div id="false-positives" class="section level2">
 <h2>False positives</h2>
+<p>All false positives combined.</p>
 <pre class="r"><code>ufor_step2_clean %&gt;%
   dplyr::filter(context == &quot;hit&quot;) %&gt;%
   dplyr::filter(`Question Type` == &quot;False positive&quot;) %&gt;%
@@ -994,8 +949,8 @@ are per Action Format.</p>
 <p>As we were interested in UF-or questions, assertions were by
 definition false positives (although an interesting phenomenon in its
 own right).</p>
-<p>For example <em>Suggestion/advice marked with UF-or</em> (N=1) (ART:
-COME3, line 64):</p>
+<p>For example <em>Suggestion/advice marked with UF-or</em> (N=1)</p>
+<p>ART: COME3 (instance 13):</p>
 <pre class="r"><code>ufor_step2_clean %&gt;%
   dplyr::filter(hit == &quot;instance 13&quot;) %&gt;%
   dplyr::filter(context == &quot;hit&quot;| context == &quot;post1&quot;) %&gt;%
@@ -1009,8 +964,9 @@ COME3, line 64):</p>
 <p><strong>2. Interrogatives (N=10)</strong></p>
 <ol style="list-style-type: lower-alpha">
 <li>FP due to question being request for permission rather than request
-for information (N=1) (ART: COME3, instance 16)</li>
+for information (N=1)</li>
 </ol>
+<p>ART: COME3 (instance 16)</p>
 <pre class="r"><code>ufor_step2_clean %&gt;%
   dplyr::filter(hit == &quot;instance 16&quot;) %&gt;%
   dplyr::filter(context != &quot;post2&quot;) %&gt;%
@@ -1024,8 +980,9 @@ for information (N=1) (ART: COME3, instance 16)</li>
 ## 4 [P2] Yes I I can j I can do that for you okay uh five and nine&#39;s fourteen&#39;s f…</code></pre>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>FP due to instance being utterance-medial rather than
-utterance-final (N=3) (MCE: MECG1M1, instance 54)</li>
+utterance-final (N=3)</li>
 </ol>
+<p>MCE: MECG1M1 (instance 54)</p>
 <pre class="r"><code>ufor_step2_clean %&gt;%
   dplyr::filter(hit == &quot;instance 54&quot;) %&gt;%
   dplyr::select(text)</code></pre>
@@ -1037,7 +994,7 @@ utterance-final (N=3) (MCE: MECG1M1, instance 54)</li>
 ## 3 And you have been punished by your uh parents or
 ## 4 Yeap.                                           
 ## 5 by the school.</code></pre>
-<p>(LTCE: Beth &amp; Daniel, instance 82)</p>
+<p>LTCE: Beth &amp; Daniel (instance 82)</p>
 <pre class="r"><code>ufor_step2_clean %&gt;%
   dplyr::filter(hit == &quot;instance 82&quot;) %&gt;%
   dplyr::select(text)</code></pre>
@@ -1049,7 +1006,7 @@ utterance-final (N=3) (MCE: MECG1M1, instance 54)</li>
 ## 3 &quot;B:    ha.. having a strong opinion or =&quot;                                     
 ## 4 &quot;D:                             = yeah [fighting]&quot;                            
 ## 5 &quot;B:                                  [or just an opin..]&quot;</code></pre>
-<p>(MCE: MESJ3F1, line 364):</p>
+<p>MCE: MESJ3F1 (instance 73):</p>
 <pre class="r"><code>ufor_step2_clean %&gt;%
   dplyr::filter(hit == &quot;instance 73&quot;) %&gt;%
   dplyr::select(text)</code></pre>
@@ -1062,10 +1019,17 @@ utterance-final (N=3) (MCE: MECG1M1, instance 54)</li>
 ## 4 (?)                                                                 
 ## 5 or have you been in hospital or you thought you were going to</code></pre>
 <ol start="3" style="list-style-type: lower-alpha">
-<li>FP created through script (N=6) (i.e. <em>or not</em> (instance 42,
-76, 459), <em>or no</em> (instance 78), <em>or so</em> (instance 22),
-<em>or two</em> (instance 41))</li>
+<li>FP created through script (N=6), i.e.:</li>
 </ol>
+<ul>
+<li><em>or not</em> (instance 42, 76, 92)<br />
+</li>
+<li><em>or no</em> (instance 78)<br />
+</li>
+<li><em>or so</em> (instance 22)<br />
+</li>
+<li><em>or two</em> (instance 41)</li>
+</ul>
 <p><strong><em>or not</em></strong></p>
 <pre class="r"><code>ufor_step2_clean %&gt;%
   dplyr::filter(`Question Type` == &quot;False positive&quot;,
@@ -1144,20 +1108,18 @@ ufor_step3 %&gt;%
   head(10) %&gt;%
   # show results as a table
   knitr::kable()</code></pre>
-<table style="width:100%;">
+<table>
 <colgroup>
 <col width="1%" />
-<col width="12%" />
-<col width="6%" />
+<col width="15%" />
+<col width="8%" />
 <col width="3%" />
 <col width="2%" />
-<col width="33%" />
-<col width="3%" />
-<col width="3%" />
+<col width="40%" />
+<col width="4%" />
 <col width="4%" />
 <col width="5%" />
-<col width="4%" />
-<col width="13%" />
+<col width="6%" />
 <col width="5%" />
 </colgroup>
 <thead>
@@ -1173,25 +1135,23 @@ ufor_step3 %&gt;%
 <th align="left">response.polarity</th>
 <th align="left">response.elaboration</th>
 <th align="left">response.alignment</th>
-<th align="left">annotator.comment.1</th>
-<th align="left">annotator.comment.2</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">25770</td>
+<td align="left">23027</td>
 <td align="left">The La Trobe Corpus of Spoken Australian English</td>
-<td align="left">Transcrp - Natalie &amp; Ken</td>
-<td align="left">instance 96</td>
-<td align="left">post1</td>
-<td align="left">Natalie: [um]</td>
+<td align="left">Transcrp - Heather &amp; Marie</td>
+<td align="left">instance 83</td>
+<td align="left">hit</td>
+<td align="left">think about a certain situation and you really ..
+hadn’t .. come to a conclusion would you say “maybe maybe yes maybe no”
+or…</td>
+<td align="left">Q</td>
+<td align="left">P</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="left">NoA</td>
-<td align="left">NE</td>
-<td align="left">NTC</td>
-<td align="left">Continuer rather than confirmation</td>
-<td align="left">Borderline case</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">23028</td>
@@ -1207,18 +1167,14 @@ answer</td>
 <td align="left">YN</td>
 <td align="left">E</td>
 <td align="left">NTC</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">23025</td>
+<td align="left">23029</td>
 <td align="left">The La Trobe Corpus of Spoken Australian English</td>
 <td align="left">Transcrp - Heather &amp; Marie</td>
 <td align="left">instance 83</td>
-<td align="left">pre2</td>
-<td align="left">Marie: [yeah it’s]</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
+<td align="left">post2</td>
+<td align="left">“peut-être bien que oui, peut-être bien que non” =</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
@@ -1238,50 +1194,14 @@ about your it’s .. I sit here well what did you</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="left">23027</td>
+<td align="left">23025</td>
 <td align="left">The La Trobe Corpus of Spoken Australian English</td>
 <td align="left">Transcrp - Heather &amp; Marie</td>
 <td align="left">instance 83</td>
-<td align="left">hit</td>
-<td align="left">think about a certain situation and you really ..
-hadn’t .. come to a conclusion would you say “maybe maybe yes maybe no”
-or…</td>
-<td align="left">Q</td>
-<td align="left">P</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-</tr>
-<tr class="even">
-<td align="left">23029</td>
-<td align="left">The La Trobe Corpus of Spoken Australian English</td>
-<td align="left">Transcrp - Heather &amp; Marie</td>
-<td align="left">instance 83</td>
-<td align="left">post2</td>
-<td align="left">“peut-être bien que oui, peut-être bien que non” =</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">25767</td>
-<td align="left">The La Trobe Corpus of Spoken Australian English</td>
-<td align="left">Transcrp - Natalie &amp; Ken</td>
-<td align="left">instance 96</td>
 <td align="left">pre2</td>
-<td align="left">Ken: = yeah</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
+<td align="left">Marie: [yeah it’s]</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
@@ -1289,21 +1209,6 @@ or…</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left">25768</td>
-<td align="left">The La Trobe Corpus of Spoken Australian English</td>
-<td align="left">Transcrp - Natalie &amp; Ken</td>
-<td align="left">instance 96</td>
-<td align="left">pre1</td>
-<td align="left">Natalie: but um …</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-</tr>
-<tr class="odd">
 <td align="left">25769</td>
 <td align="left">The La Trobe Corpus of Spoken Australian English</td>
 <td align="left">Transcrp - Natalie &amp; Ken</td>
@@ -1316,8 +1221,19 @@ like what ex.. ..is that through experience? or ..</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">25770</td>
+<td align="left">The La Trobe Corpus of Spoken Australian English</td>
+<td align="left">Transcrp - Natalie &amp; Ken</td>
+<td align="left">instance 96</td>
+<td align="left">post1</td>
+<td align="left">Natalie: [um]</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
+<td align="left">NoA</td>
+<td align="left">NE</td>
+<td align="left">NTC</td>
 </tr>
 <tr class="even">
 <td align="left">25771</td>
@@ -1332,7 +1248,31 @@ impression you have?</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
-<td align="left">Polar question transformed into alternate question</td>
+</tr>
+<tr class="odd">
+<td align="left">25768</td>
+<td align="left">The La Trobe Corpus of Spoken Australian English</td>
+<td align="left">Transcrp - Natalie &amp; Ken</td>
+<td align="left">instance 96</td>
+<td align="left">pre1</td>
+<td align="left">Natalie: but um …</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">25767</td>
+<td align="left">The La Trobe Corpus of Spoken Australian English</td>
+<td align="left">Transcrp - Natalie &amp; Ken</td>
+<td align="left">instance 96</td>
+<td align="left">pre2</td>
+<td align="left">Ken: = yeah</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
 </tbody>
@@ -1343,8 +1283,10 @@ impression you have?</td>
 every row in the data.<br />
 </li>
 <li>corpus: the name of the corpus in which the potential instance
-occurred</li>
-<li>file: the file in which the potential instance occurred</li>
+occurred<br />
+</li>
+<li>file: the file in which the potential instance occurred<br />
+</li>
 <li>hit: the number of the potential instance<br />
 </li>
 <li>context: specification of whether the text shows previous utterances
@@ -1354,19 +1296,18 @@ occurred</li>
 <li>text: the utterance preceding, containing, or following a potential
 instance of UF-or<br />
 </li>
-<li>action.format: Question or Assertion</li>
+<li>action.format: Question or Assertion<br />
+</li>
 <li>question.type: Polar, Alternative, Q-word<br />
 </li>
 <li>response.polarity: Polarity of the response (post1) -confirming [Y],
 disconfirming [N], (dis)confirming [Y-N], non-answers [NA]<br />
 </li>
 <li>response.elaboration: Elaboration of the response (post1) -
-elaboration [E], no elaboration [NE]</li>
-<li>response.alignment: Alignment of the response (post1) -
-type-conforming [TC], non-type-conforming [NTC]<br />
+elaboration [E], no elaboration [NE]<br />
 </li>
-<li>annotator.comment.1: Comments by the annotator</li>
-<li>annotator.comment.2: Comments by the annotator</li>
+<li>response.alignment: Alignment of the response (post1) -
+type-conforming [TC], non-type-conforming [NTC]</li>
 </ul>
 <p>Most of the cells are empty and do not contain any annotation
 information (these are all cells containing <em>NA</em> which stands for
@@ -1375,6 +1316,7 @@ information (these are all cells containing <em>NA</em> which stands for
 <code>NA</code> and renaming columns and variable levels to be easier to
 understand</p>
 <pre class="r"><code>ufor_step3_clean &lt;- ufor_step3 %&gt;%
+  dplyr::mutate(question.type = str_squish(question.type)) %&gt;%
   dplyr::group_by(hit) %&gt;%
   tidyr::fill(action.format, .direction = &quot;updown&quot;) %&gt;%
   tidyr::fill(question.type, .direction = &quot;updown&quot;) %&gt;%
@@ -1386,9 +1328,7 @@ understand</p>
                 `Question Type` = question.type,
                 `Response Polarity` = response.polarity,
                 `Response Alignment` = response.alignment,
-                `Response Elaboration` = response.elaboration,
-                `Annotator Comment 1` = annotator.comment.1,
-                `Annotator Comment 2` = annotator.comment.2,) %&gt;%
+                `Response Elaboration` = response.elaboration) %&gt;%
   # renaming levels
   dplyr::mutate(`Action Format` = factor(`Action Format`, 
                                        levels = c(&quot;Q&quot;, &quot;A&quot;), 
@@ -1409,18 +1349,16 @@ understand</p>
   dplyr::ungroup()
 # inspect
 head(ufor_step3_clean, 5)</code></pre>
-<pre><code>## # A tibble: 5 × 13
+<pre><code>## # A tibble: 5 × 11
 ##   X1    corpus file  hit   context text  Actio…¹ Quest…² Respo…³ Respo…⁴ Respo…⁵
 ##   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;fct&gt;   &lt;fct&gt;   &lt;fct&gt;   &lt;fct&gt;   &lt;fct&gt;  
-## 1 14932 Monash MEBH… inst… post1   BH2F… Questi… Polar … B-answ… No ela… Non-Ty…
-## 2 17887 Monash MECG… inst… post1   Anyt… Questi… Polar … B-answ… No ela… Non-Ty…
-## 3 1642  Austr… ABCE4 inst… post1   [E1]… Questi… Polar … Discon… Elabor… Non-Ty…
-## 4 2522  Austr… COME1 inst… post1   [E1]… Questi… Polar … Discon… Elabor… Type-C…
-## 5 3474  Austr… COME3 inst… post1   [C18… Questi… Polar … Discon… Elabor… Non-Ty…
-## # … with 2 more variables: `Annotator Comment 1` &lt;chr&gt;,
-## #   `Annotator Comment 2` &lt;chr&gt;, and abbreviated variable names
-## #   ¹​`Action Format`, ²​`Question Type`, ³​`Response Polarity`,
-## #   ⁴​`Response Elaboration`, ⁵​`Response Alignment`</code></pre>
+## 1 134   Austr… ABCE1 inst… hit     [P1]… Questi… Polar … Confir… Elabor… Type-C…
+## 2 135   Austr… ABCE1 inst… post1   [E1]… Questi… Polar … Confir… Elabor… Type-C…
+## 3 136   Austr… ABCE1 inst… post2   [C5]… Questi… Polar … Confir… Elabor… Type-C…
+## 4 133   Austr… ABCE1 inst… pre1    [E1]… Questi… Polar … Confir… Elabor… Type-C…
+## 5 132   Austr… ABCE1 inst… pre2    [C5]… Questi… Polar … Confir… Elabor… Type-C…
+## # … with abbreviated variable names ¹​`Action Format`, ²​`Question Type`,
+## #   ³​`Response Polarity`, ⁴​`Response Elaboration`, ⁵​`Response Alignment`</code></pre>
 <p>We now generate an overview tables.</p>
 <div id="response-polarity" class="section level2">
 <h2>Response Polarity</h2>
@@ -1563,6 +1501,53 @@ head(ufor_step3_clean, 5)</code></pre>
 <td align="left">Total</td>
 <td align="right">55</td>
 <td align="right">100.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="elaboration" class="section level2">
+<h2>Elaboration</h2>
+<pre class="r"><code>ufor_step3_clean %&gt;%
+    dplyr::filter(context == &quot;hit&quot;) %&gt;%
+  dplyr::mutate(`Response Polarity` = dplyr::case_when(`Response Polarity` == &quot;B-answer [B]&quot; ~ &quot;Non-polar&quot;,
+                                                       `Response Polarity` == &quot;Non-answers [NA]&quot; ~ &quot;Non-polar&quot;,
+                                                       T ~ &quot;Polar&quot;)) %&gt;%
+  dplyr::filter(`Response Polarity` == &quot;Polar&quot;) %&gt;%
+  dplyr::group_by(`Response Elaboration`) %&gt;%
+  dplyr::summarise(N = n()) %&gt;%
+  dplyr::arrange(-N) %&gt;%
+  dplyr::ungroup() %&gt;%
+  dplyr::mutate(Total = sum(N)) %&gt;%
+  dplyr::rowwise() %&gt;%
+  dplyr::mutate(Percent = round(N/Total*100, 1)) %&gt;%
+  dplyr::select(-Total) %&gt;%
+  dplyr::add_row(`Response Elaboration` = &quot;Total&quot;,
+                 N = sum(.$N),
+                 Percent = sum(.$Percent)) %&gt;%
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Response Elaboration</th>
+<th align="right">N</th>
+<th align="right">Percent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Elaboration [E]</td>
+<td align="right">36</td>
+<td align="right">75</td>
+</tr>
+<tr class="even">
+<td align="left">No elaboration [NE]</td>
+<td align="right">12</td>
+<td align="right">25</td>
+</tr>
+<tr class="odd">
+<td align="left">Total</td>
+<td align="right">48</td>
+<td align="right">100</td>
 </tr>
 </tbody>
 </table>
@@ -2012,33 +1997,30 @@ the number following the sequence <code>&quot;instance &quot;</code> in the code
 below.</p>
 <pre class="r"><code>ufor_step2_clean %&gt;%
   dplyr::filter(hit == &quot;instance 2&quot;)</code></pre>
-<pre><code>## # A tibble: 5 × 10
-##   X1    corpus         file  hit   context text  Actio…¹ Quest…² Annot…³ Annot…⁴
-##   &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;fct&gt;   &lt;fct&gt;   &lt;chr&gt;   &lt;chr&gt;  
-## 1 382   Australian Ra… ABCE1 inst… pre2    [P1]… Questi… Polar … &lt;NA&gt;    &lt;NA&gt;   
-## 2 383   Australian Ra… ABCE1 inst… pre1    [Cal… Questi… Polar … &lt;NA&gt;    &lt;NA&gt;   
-## 3 384   Australian Ra… ABCE1 inst… hit     [P1]… Questi… Polar … &lt;NA&gt;    &lt;NA&gt;   
-## 4 385   Australian Ra… ABCE1 inst… post1   [C10… Questi… Polar … &lt;NA&gt;    &lt;NA&gt;   
-## 5 386   Australian Ra… ABCE1 inst… post2   [P1]… Questi… Polar … &lt;NA&gt;    &lt;NA&gt;   
-## # … with abbreviated variable names ¹​`Action Format`, ²​`Question Type`,
-## #   ³​`Annotator Comment 1`, ⁴​`Annotator Comment 2`</code></pre>
+<pre><code>## # A tibble: 5 × 8
+##   X1    corpus                    file  hit        context text  Actio…¹ Quest…²
+##   &lt;chr&gt; &lt;chr&gt;                     &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt; &lt;fct&gt;   &lt;fct&gt;  
+## 1 382   Australian Radio Talkback ABCE1 instance 2 pre2    [P1]… Questi… Polar …
+## 2 383   Australian Radio Talkback ABCE1 instance 2 pre1    [Cal… Questi… Polar …
+## 3 384   Australian Radio Talkback ABCE1 instance 2 hit     [P1]… Questi… Polar …
+## 4 385   Australian Radio Talkback ABCE1 instance 2 post1   [C10… Questi… Polar …
+## 5 386   Australian Radio Talkback ABCE1 instance 2 post2   [P1]… Questi… Polar …
+## # … with abbreviated variable names ¹​`Action Format`, ²​`Question Type`</code></pre>
 <p>If you want to inspect the instances and coding in the data set
 loaded for step 3, you simply need to change
 <code>ufor_step2_clean</code> to <code>ufor_step3_clean</code>.</p>
 <pre class="r"><code>ufor_step3_clean %&gt;%
   dplyr::filter(hit == &quot;instance 2&quot;)</code></pre>
-<pre><code>## # A tibble: 5 × 13
+<pre><code>## # A tibble: 5 × 11
 ##   X1    corpus file  hit   context text  Actio…¹ Quest…² Respo…³ Respo…⁴ Respo…⁵
 ##   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;fct&gt;   &lt;fct&gt;   &lt;fct&gt;   &lt;fct&gt;   &lt;fct&gt;  
-## 1 385   Austr… ABCE1 inst… post1   [C10… Questi… Polar … Discon… No ela… Type-C…
-## 2 382   Austr… ABCE1 inst… pre2    [P1]… Questi… Polar … Discon… No ela… Type-C…
-## 3 383   Austr… ABCE1 inst… pre1    [Cal… Questi… Polar … Discon… No ela… Type-C…
-## 4 384   Austr… ABCE1 inst… hit     [P1]… Questi… Polar … Discon… No ela… Type-C…
-## 5 386   Austr… ABCE1 inst… post2   [P1]… Questi… Polar … Discon… No ela… Type-C…
-## # … with 2 more variables: `Annotator Comment 1` &lt;chr&gt;,
-## #   `Annotator Comment 2` &lt;chr&gt;, and abbreviated variable names
-## #   ¹​`Action Format`, ²​`Question Type`, ³​`Response Polarity`,
-## #   ⁴​`Response Elaboration`, ⁵​`Response Alignment`</code></pre>
+## 1 384   Austr… ABCE1 inst… hit     [P1]… Questi… Polar … Discon… No ela… Type-C…
+## 2 385   Austr… ABCE1 inst… post1   [C10… Questi… Polar … Discon… No ela… Type-C…
+## 3 386   Austr… ABCE1 inst… post2   [P1]… Questi… Polar … Discon… No ela… Type-C…
+## 4 383   Austr… ABCE1 inst… pre1    [Cal… Questi… Polar … Discon… No ela… Type-C…
+## 5 382   Austr… ABCE1 inst… pre2    [P1]… Questi… Polar … Discon… No ela… Type-C…
+## # … with abbreviated variable names ¹​`Action Format`, ²​`Question Type`,
+## #   ³​`Response Polarity`, ⁴​`Response Elaboration`, ⁵​`Response Alignment`</code></pre>
 <p>Tabulation can be done by filtering the row containing the instance
 of UF-or and then grouping and summarizing based on what you want to
 tabulate.</p>
