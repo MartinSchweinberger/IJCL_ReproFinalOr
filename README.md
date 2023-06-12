@@ -1,6 +1,14 @@
 # Introduction
 
-This reporsitory accompanies the article *How to improve reproducibility in corpus pragmatics* and showcases the interpretative analysis of the use of utterance final *or* in informal spoken Australian English. 
+This repository accompanies the article *Reproducibility and transparency in interpretive corpus pragmatics* and showcases the interpretative analysis of the use of utterance final *or* in informal spoken Australian English. 
+
+Overview of the contents of this repository 
+
++ The file **ufor-Part1.Rmd** represents the R Notebook which contains the first part (data extraction and processing) of the analysis of utterance-final *or*. 
++ The file **ufor-Part1.html** represents a HTML document, resulting from rendering the R Notebook which contains the first part (data extraction and processing) of the analysis of utterance-final *or*. 
++ The file **ufor-Part2.Rmd** represents the R Notebook which contains the second part (data analysis) of the analysis of utterance-final *or*. 
++ The file **ufor-Part2.html** represents a HTML document, resulting from rendering the R Notebook which contains the second part (data analysis) of the analysis of utterance-final *or*. 
++ The file **ufor-Part2_INTERCATIVE.ipynb** represents an interactive Jupyter Notebook which allows the reprodcution of the second part (data analysis) of the analysis of utterance-final *or*. The code chunks in this  interactive Jupyter Notebook can we *run* by clicking on the play button. Additionally, the code can be edited and changed to inspect other examples of utterance-final *or*.
 
 # Corpus Data
 
@@ -13,7 +21,7 @@ The data for this analysis are corpora that are part of the *Australian National
 
 # Instructions for use
 
-The notebooks in this reporsitory assume that the corpora are stored in a subdirectory labelled *data*. While the entire code (see [here for the R notebook](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/ufor_cb.Rmd)) for the analysis is made avialable and displayed (see [here for a rendered pdf version of the R notebook](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/ufor_cb.pdf)), we decided against uploading and making the data available in this reporsitory for copyright reasons. Accordingly, the interactive notebooks start with the analysis at a point where the instances of speech-unit final *or* are extracted for the corpus data.   
+The notebooks in this reporsitory assume that the corpora are stored in a subdirectory labelled *data*. While the entire code (see [here for the R notebook representing the first part of the analysis](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/ufor-Part1.Rmd) and [here for the R notebook representing the second part of the analysis](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/ufor-Part2.Rmd)) for the analysis is made avialable and displayed (see [here for a rendered html version of the first part of the analysis](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/ufor-Part1.html) and see [here for a rendered html version of the second part of the analysis](https://github.com/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/blob/main/ufor-Part2.html)), we decided against uploading and making the data available in this reporsitory for copyright reasons. The interactive notebook therefore start with the analysis at a point where the instances of speech-unit final *or* are extracted from the corpus data.   
 
 # Interactive notebook
 
@@ -21,5 +29,5 @@ If you click on the link below, an interactive Jupyter notebook will start up in
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=ufor_cb.ipynb)
 
-[Interactive notebook detailing the analysis of utterance-final or in Australian English](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=suor-Part2 INTERACTIVE Data Analysis.ipynb)
+[Interactive notebook detailing the analysis of utterance-final or in Australian English](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=ufor-Part2_INTERACTIVE.ipynb)
 
