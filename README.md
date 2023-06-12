@@ -2,7 +2,7 @@
 
 This repository accompanies the article *Reproducibility and transparency in interpretive corpus pragmatics* and showcases the interpretative analysis of the use of utterance final *or* in informal spoken Australian English. 
 
-Overview of the (relevant)^[With relevant we mean files and documents that have more than porely technical relevance. For instnace, the install.R file has only technical relevance as it contains information about what packages need to be installed for the interactive Jupyter notebook.] contents of this repository 
+Overview of the relevant^[With relevant we mean files and documents that have more than porely technical relevance. For instnace, the install.R file has only technical relevance as it contains information about what packages need to be installed for the interactive Jupyter notebook.] contents of this repository 
 
 + The file **ufor-Part1.Rmd** represents the R Notebook which contains the first part (data extraction and processing) of the analysis of utterance-final *or*. 
 + The file **ufor-Part1.html** represents a HTML document, resulting from rendering the R Notebook which contains the first part (data extraction and processing) of the analysis of utterance-final *or*. 
