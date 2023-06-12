@@ -21,5 +21,5 @@ If you click on the link below, an interactive Jupyter notebook will start up in
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=ufor_cb.ipynb)
 
-[Interactive notebook detailing the analysis of utterance-final or in Australian English](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=ufor_cb.ipynb)
+[Interactive notebook detailing the analysis of utterance-final or in Australian English](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=suor-Part2 INTERACTIVE Data Analysis.ipynb)
 
