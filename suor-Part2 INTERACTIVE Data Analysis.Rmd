@@ -1,0 +1,278 @@
+
+# Reproducibility and transparency in interpretive corpus pragmatics - Part 2: INTERACTIVE data analysis
+Martin Schweinberger and Michael Haugh
+
+June 12, 2023
+
+## Preparation
+
+In a first step, we load or activate the packages.
+
+```{r setup2, message=F, warning=F}
+library(dplyr)
+library(stringr)
+library(tidyr)
+library(quanteda)
+library(here)
+library(openxlsx)
+library(knitr)
+```
+
+
+## Data Exploration and Analysis
+
+We now load the manually annotated data and check what the data looks like.
+
+```{r ufor_ann, warning=F, message=F}
+ufor_ann <- openxlsx::read.xlsx(here::here("tables", "ufors_annotated.xlsx"), sheet = 1)
+# inspect
+ufor_ann %>%
+  dplyr::filter(corpus == "The La Trobe Corpus of Spoken Australian English") %>%
+  head()
+```
+
+
+Most of the cells are empty and do not contain any annotation information (these are all cells containing *NA* which stands for *not applicable*).
+
+You can use and edit the code chunk below to inspect other instances of utterance-final *or* by changing the identifier of the instance, e.g., from `instance 1` (which is the default below) to `instance 51` (overall, there are 98).
+
+```{r}
+# inspect
+ufor_ann %>%
+  dplyr::filter(hit == "instance 1")
+```
+
+
+## Creating overview tables
+
+We will now generate an overview table showing us how frequent different combinations are in the raw data.
+
+Be start with tabulating the *action.type* against the *question.type* to get an overview of gerenal frequencies while also filtering out false positives, i.e. instances that where not 
+
+```{r otb1, warning=F, message=F}
+ufor_clean <- ufor_ann %>%
+  dplyr::group_by(hit) %>%
+  tidyr::fill(action.type, .direction = "updown") %>%
+  tidyr::fill(question.type, .direction = "updown") %>%
+  tidyr::fill(response.polarity, .direction = "updown") %>%
+  tidyr::fill(`explicit-inferred`, .direction = "updown") %>%
+  tidyr::fill(response.type, .direction = "updown") %>%
+  # rename
+  dplyr::rename(`Action Type` = action.type,
+                `Question Type` = question.type,
+                `Response Polarity` = response.polarity,
+                `Explicit vs Inferred` = `explicit-inferred`,
+                `Response Type` = response.type,
+                `Annotator Comment` = annotator.comment,
+                `Turn-Initial Particle` = `turn-initial.particle`) %>%
+  # renaming levels
+  dplyr::mutate(`Action Type` = factor(`Action Type`, 
+                                       levels = c("A", "Q", "R", "S"), 
+                                       labels = c("Assertion", "Information-seeking question", "Request", "Suggestion")),
+                `Question Type`  = factor(`Question Type`, 
+                                       levels = c("P", "A", "Q", "FP"), 
+                                       labels = c("Polar question", "Alternative question", "Q-word question", "False positive")),
+                `Response Polarity`  = factor(`Response Polarity`, 
+                                              levels = c("A", "AB", "B", "N"), 
+                                              labels = c("Polar question", "Alternative question", "Q-word question", "False positive")),
+                `Explicit vs Inferred` = factor(`Explicit vs Inferred`,
+                                                levels = c("E", "I"),
+                                                labels = c("Explicit", "Inferred")),
+                `Response Type` = factor(`Response Type`,
+                                                levels = c("TC", "NTC"),
+                                                labels = c("Type Conforming", "Non-Type Conforming")))
+# inspect
+head(ufor_clean)
+```
+
+  
+  
+```{r otb1, warning=F, message=F}
+ufor_clean %>%
+  dplyr::filter(context == "hit") %>%
+  group_by(`Question Type`) %>% 
+  dplyr::summarise(Frequency = n()) %>%
+  dplyr::arrange(-Frequency) %>%
+  tidyr::spread(`Question Type`, Frequency) %>%
+  replace(is.na(.), 0)
+```
+
+
+
+```{r otb1, warning=F, message=F}
+ufor_clean %>%
+  dplyr::filter(context == "hit") %>%
+  group_by(`Action Type`, `Question Type`) %>% 
+  dplyr::summarise(Frequency = n()) %>%
+  dplyr::arrange(-Frequency) %>%
+  tidyr::spread(`Question Type`, Frequency) %>%
+  replace(is.na(.), 0)
+```
+
+
+
+```{r ufor_anntb, warning=F, message=F}
+ufor_clean %>%
+  dplyr::group_by(hit) %>%
+  tidyr::fill(`Action Type`, .direction = "updown") %>%
+  tidyr::fill(`Question Type`, .direction = "updown") %>%
+  tidyr::fill(`Response Polarity`, .direction = "updown") %>%
+  tidyr::fill(`Explicit vs Inferred`, .direction = "updown") %>%
+  tidyr::fill(`Response Type`, .direction = "updown") %>%
+  dplyr::filter(context == "hit") %>%
+  group_by(`Action Type`, `Question Type`, `Response Polarity`, `Explicit vs Inferred`, `Response Type`) %>% 
+  dplyr::summarise(Frequency = n()) %>%
+  dplyr::arrange(-Frequency)
+```
+
+
+
+> It is important to note that there are false positives in the data, i.e. instances that do not really represent instances of utterance-final *or*. Hence, we will remove all instances representing false positives but also non-canonical uses of utterance-final *or* from the data as the analysis will focus on canonical uses of utterance-final *or*. Cononical instances are where the *or* is part of a ploar question.
+
+### Canonical (Q-P) Instances
+
+```{r cantb, warning=F, message=F}
+# inspect
+ufor_can <- ufor_ann %>%
+  dplyr::group_by(hit) %>%
+  tidyr::fill(action.type, .direction = "updown") %>%
+  tidyr::fill(question.type, .direction = "updown") %>%
+  tidyr::fill(response.polarity, .direction = "updown") %>%
+  tidyr::fill(`explicit-inferred`, .direction = "updown") %>%
+  tidyr::fill(response.type, .direction = "updown") %>%
+  # filter canonical instances
+  dplyr::filter(action.type == "Q" & question.type == "P")
+# inspect
+head(ufor_can)
+```
+
+
+We check how many instances of utterance-final *or* are left.
+
+```{r}
+length(names(table(ufor_can$hit)))
+```
+
+We are left with 57 canonical instances of utterance-final *or* (i.e. where the utterance containing utterance-final *or* is an information seeking question (Q) and a polar question (P).
+
+
+We will now check, what instances are left in the data.
+
+```{r}
+names(table(ufor_can$hit))
+```
+
+
+You can use and edit the code chunk below to inspect other instances of utterance-final *or* by changing the identifier of the instance, e.g., from `instance 1` (which is the default below) to `instance 9` (overall, there are 57).
+
+```{r}
+# inspect
+ufor_can %>%
+  dplyr::filter(hit == "instance 1")
+```
+
+
+
+We will now generate an overview table showing us how frequent different combinations are in the canonical data.
+
+```{r ufor_camoverview, warning=F, message=F}
+ufor_can %>%
+  dplyr::filter(context == "hit") %>%
+  group_by(action.type, question.type, response.polarity, `explicit-inferred`, response.type) %>% 
+  dplyr::summarise(Frequency = n()) %>%
+  dplyr::arrange(-Frequency)
+```
+
+### Canonical with Y or N response
+
+We now want to check the instances where the canonical sequence has received either a positive *yes* [Y] or a negative *no* [N] responses.
+
+```{r}
+ufor_can_yn <- ufor_can %>%
+  dplyr::filter(response.polarity == "Y" | response.polarity == "N")
+# inspect
+head(ufor_can_yn)
+```
+
+Again, we will now check, how many instances are left in the data.
+
+```{r}
+length(names(table(ufor_can_yn$hit)))
+```
+We see that there are 46 instances left of canonical sequences where the response is positive or negative.
+
+We will now check, what instances are left in the data.
+
+```{r}
+names(table(ufor_can_yn$hit))
+```
+
+
+You can use and edit the code chunk below to inspect other instances of utterance-final *or* with positive and negative responses by changing the identifier of the instance, e.g., from `instance 1` (which is the default below) to `instance 82` (overall, there are 46).
+
+```{r ufor_can_yn_overview, message=F, warning=F}
+# inspect
+ufor_can_yn %>%
+  dplyr::filter(hit == "instance 1")
+```
+
+
+We will now generate an overview table showing us how frequent different combinations are in the canonical data  with positive and negative responses.
+
+```{r ufor_can_yn_overview2, message=F, warning=F}
+ufor_can_yn %>%
+  dplyr::filter(context == "hit") %>%
+  group_by(action.type, question.type, response.polarity, `explicit-inferred`, response.type) %>% 
+  dplyr::summarise(Frequency = n()) %>%
+  dplyr::arrange(-Frequency)
+```
+
+### Canonical with explicit Y or N response
+
+We now want to check the instances where the canonical sequence has received either an **explicit** positive *yes* [Y] or negative *no* [N] responses.
+
+```{r}
+ufor_can_eyn <- ufor_can_yn %>%
+  dplyr::filter(`explicit-inferred` == "E")
+# inspect
+head(ufor_can_eyn)
+```
+
+Again, we will now check, how many instances are left in the data.
+
+```{r}
+length(names(table(ufor_can_eyn$hit)))
+```
+
+Also, we check, what instances are left in the data.
+
+```{r}
+names(table(ufor_can_eyn$hit))
+```
+
+You can use and edit the code chunk below to inspect other instances of utterance-final *or* with positive and negative responses by changing the identifier of the instance, e.g., from `instance 1` (which is the default below) to `instance 75` (overall, there are 37).
+
+```{r}
+# inspect
+ufor_can_eyn %>%
+  dplyr::filter(hit == "instance 1")
+```
+
+We will now generate an overview table showing us how frequent different combinations are in the canonical data  with explicit positive and negative responses.
+
+```{r ufor_can_yn_overview5, message=F, warning=F}
+ufor_can_eyn %>%
+  dplyr::filter(context == "hit") %>%
+  group_by(action.type, question.type, response.polarity, `explicit-inferred`, response.type) %>% 
+  dplyr::summarise(Frequency = n()) %>%
+  dplyr::arrange(-Frequency)
+```
+
+
+## Outro
+
+```{r}
+sessionInfo()
+```
+
+
