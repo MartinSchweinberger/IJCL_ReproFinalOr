@@ -27,7 +27,7 @@ The notebooks in this reporsitory assume that the corpora are stored in a subdir
 
 If you click on the link below, an interactive Jupyter notebook will start up in your browser so you can check the anaysis, inspect the examples, execute the commands yourself, and also probe the data in more detail as well as tabulating and slicing the date both as done in the study as well as in ways you are intersted in tabulating and slicing the data.
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=ufor_cb.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=ufor-Part2_INTERACTIVE.ipynb)
 
 [Interactive notebook detailing the analysis of utterance-final or in Australian English](https://mybinder.org/v2/gh/MartinSchweinberger/IJCL_ReproducibilityInCorpusPragmatics/main?labpath=ufor-Part2_INTERACTIVE.ipynb)
 
